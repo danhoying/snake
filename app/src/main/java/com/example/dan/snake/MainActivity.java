@@ -2,10 +2,13 @@ package com.example.dan.snake;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Point;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.Display;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -25,7 +28,7 @@ public class MainActivity extends AppCompatActivity {
     // Stats
     long lastFrameTime;
     int fps;
-    int hi;
+    int i;
 
     // To start the game from onTouchEvent
     Intent intent;
@@ -33,6 +36,17 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        // Find the width and height of screen
+        Display display = getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        screenWidth = size.x;
+        screenHeight = size.y;
+
+        headAnimBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.head_sprite_sheet);
+        snakeAnimView = new SnakeAnimView(this);
+        setContentView(snakeAnimView);
+
+        i = new Intent(this, GameActivity.class);
     }
 }
