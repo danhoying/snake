@@ -1,14 +1,18 @@
 package com.example.dan.snake;
 
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.graphics.Point;
 import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Display;
+import android.view.SurfaceHolder;
+import android.view.SurfaceView;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -24,6 +28,8 @@ public class MainActivity extends AppCompatActivity {
     int frameWidth = 64;
     int numFrames = 6;
     int frameNumber;
+    int screenWidth;
+    int screenHeight;
 
     // Stats
     long lastFrameTime;
@@ -48,5 +54,29 @@ public class MainActivity extends AppCompatActivity {
         setContentView(snakeAnimView);
 
         i = new Intent(this, GameActivity.class);
+    }
+
+    class SnakeAnimView extends SurfaceView implements Runnable {
+        Thread ourThread = null;
+        SurfaceHolder ourHolder;
+        volatile boolean playingSnake;
+        Paint paint;
+
+        public SnakeAnimView(Context context) {
+            super(context);
+            ourHolder = getHolder();
+            paint = new Paint();
+            frameWidth = headAnimBitmap.getWidth() / numFrames;
+            frameHeight = headAnimBitmap.getHeight();
+        }
+
+        @Override
+        public void run() {
+            while (playingSnake) {
+                update();
+                draw();
+                controlFPS();
+            }
+        }
     }
 }
