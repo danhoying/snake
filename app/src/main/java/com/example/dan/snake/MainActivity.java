@@ -12,6 +12,8 @@ import android.graphics.Rect;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Display;
+import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
@@ -54,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
         snakeAnimView = new SnakeAnimView(this);
         setContentView(snakeAnimView);
 
-        i = new Intent(this, GameActivity.class);
+//        i = new Intent(this, GameActivity.class);
     }
 
     class SnakeAnimView extends SurfaceView implements Runnable {
@@ -126,5 +128,57 @@ public class MainActivity extends AppCompatActivity {
             }
             lastFrameTime = System.currentTimeMillis();
         }
+
+        public void pause() {
+            playingSnake = false;
+            try {
+                ourThread.join();
+            } catch (InterruptedException e) {
+
+            }
+        }
+
+        public void resume() {
+            playingSnake = true;
+            ourThread = new Thread(this);
+            ourThread.start();
+        }
+
+        @Override
+        public boolean onTouchEvent(MotionEvent motionEvent) {
+            startActivity(i);
+            return true;
+        }
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        while (true) {
+            snakeAnimView.pause();
+            break;
+        }
+        finish();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        snakeAnimView.resume();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        snakeAnimView.pause();
+    }
+
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            snakeAnimView.pause();
+            finish();
+            return true;
+        }
+        return false;
     }
 }
