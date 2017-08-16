@@ -114,5 +114,62 @@ public class GameActivity extends AppCompatActivity {
                 controlFPS();
             }
         }
+
+        public void updateGame() {
+            // Did the player get the apple?
+            if (snakeX[0] == appleX && snakeY[0] == appleY) {
+                // Grow the snake
+                snakeLength++;
+                //Replace the Apple
+                getApple();
+                // Add to the score
+                score = score + snakeLength;
+                soundPool.play(sample1, 1, 1, 0, 0, 1);
+            }
+            // Move the body - starting at the back
+            for (int i = snakeLength; i > 0; i--) {
+                snakeX[i] = snakeX[i - 1];
+                snakeY[i] = snakeY[i - 1];
+            }
+
+            // Move the head in the appropriate direction
+            switch (directionOfTravel) {
+                case 0: // Up
+                    snakeY[0]--;
+                    break;
+                case 1: // Right
+                    snakeX[0]++;
+                    break;
+                case 2: // Down
+                    snakeY[0]++;
+                    break;
+                case 3: // Left
+                    snakeX[0]--;
+                    break;
+            }
+
+            // Has player died?
+            boolean dead = false;
+
+            // Collision with wall
+            if (snakeX[0] == -1) dead = true;
+            if (snakeX[0] >= numBlocksWide) dead = true;
+            if (snakeY[0] == -1) dead = true;
+            if (snakeY[0] == numBlocksHigh) dead = true;
+
+            // Collision with snake body
+            for (int i = snakeLength - 1; i > 0; i--) {
+                if ((i > 4) && (snakeX[0] == snakeX[i]) && (snakeY[0] == snakeY[i])) {
+                    dead = true;
+                }
+            }
+
+            if (dead) {
+                // Start again
+                soundPool.play(sample4, 1, 1, 0, 0, 1);
+                score = 0;
+                getSnake();
+            }
+        }
     }
 }
