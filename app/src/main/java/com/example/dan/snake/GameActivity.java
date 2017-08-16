@@ -3,6 +3,7 @@ package com.example.dan.snake;
 import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.Paint;
 import android.media.SoundPool;
 import android.os.Bundle;
@@ -170,6 +171,74 @@ public class GameActivity extends AppCompatActivity {
                 score = 0;
                 getSnake();
             }
+        }
+
+        public void drawGame() {
+            if (ourHolder.getSurface().isValid()) {
+                canvas = ourHolder.lockCanvas();
+                canvas.drawColor(Color.BLACK); // The background
+                paint.setColor(Color.argb(255, 255, 255, 255));
+                paint.setTextSize(topGap / 2);
+                canvas.drawText("Score: " + score + " High: " + hi, 10, topGap - 6, paint);
+
+                // Draw a border around screen
+                paint.setStrokeWidth(3); // Set to 3 pixels
+                canvas.drawLine(1, topGap, screenWidth - 1, topGap, paint);
+                canvas.drawLine(screenWidth - 1, topGap, screenWidth - 1,
+                        topGap + (numBlocksHigh * blockSize), paint);
+                canvas.drawLine(screenWidth - 1, topGap + (numBlocksHigh * blockSize), 1,
+                        topGap + (numBlocksHigh * blockSize), paint);
+                canvas.drawLine(1, topGap, 1, topGap + (numBlocksHigh * blockSize), paint);
+
+                // Draw the snake head
+                canvas.drawBitmap(headBitmap, snakeX[0] * blockSize,
+                        (snakeY[0] * blockSize) + topGap, paint);
+
+                // Draw the snake body
+                for (int i = 1; i < snakeLength - 1; i++) {
+                    canvas.drawBitmap(bodyBitmap, snakeX[i] * blockSize,
+                            (snakeY[i] * blockSize) + topGap, paint);
+                }
+
+                // Draw the tail
+                canvas.drawBitmap(tailBitmap, snakeX[snakeLength - 1] * blockSize,
+                        (snakeY[snakeLength - 1] * blockSize) + topGap, paint);
+
+                // Draw the apple
+                canvas.drawBitmap(appleBitmap, appleX * blockSize,
+                        (appleY * blockSize) + topGap, paint);
+
+                ourHolder.unlockCanvasAndPost(canvas);
+            }
+        }
+
+        public void controlFPS() {
+            long timeThisFrame = (System.currentTimeMillis() - lastFrameTime);
+            long timeToSleep = 100 - timeThisFrame;
+            if (timeThisFrame > 0) {
+                fps = (int) (1000 / timeThisFrame);
+            }
+            if (timeToSleep > 0) {
+                try {
+                    ourThread.sleep(timeToSleep);
+                } catch (InterruptedException e) {
+                }
+            }
+            lastFrameTime = System.currentTimeMillis();
+        }
+
+        public void pause() {
+            playingSnake = false;
+            try {
+                ourThread.join();
+            } catch (InterruptedException e) {
+            }
+        }
+
+        public void resume() {
+            playingSnake = true;
+            ourThread = new Thread(this);
+            ourThread.start();
         }
     }
 }
