@@ -101,8 +101,8 @@ public class MainActivity extends AppCompatActivity {
                 paint.setColor(Color.argb(255, 255, 255, 255));
                 paint.setTextSize(150);
                 canvas.drawText("Snake", 10, 150, paint);
-                paint.setTextSize(25);
-                canvas.drawText(" High Score:" + hi, 10, screenHeight - 50, paint);
+                paint.setTextSize(50);
+                canvas.drawText(" High Score: " + hi, 10, screenHeight - 150, paint);
 
                 // Draw the snake head
                 // startX, startY, endX, endY
