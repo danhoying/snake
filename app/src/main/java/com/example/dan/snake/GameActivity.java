@@ -1,10 +1,14 @@
 package com.example.dan.snake;
 
+import android.content.Context;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.media.SoundPool;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.SurfaceHolder;
+import android.view.SurfaceView;
 
 public class GameActivity extends AppCompatActivity {
 
@@ -52,6 +56,31 @@ public class GameActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_game);
+
+        loadSound();
+        configureDisplay();
+        snakeView = new SnakeView(this);
+        setContentView(snakeView);
+    }
+
+    class SnakeView extends SurfaceView implements Runnable {
+        Thread ourThread = null;
+        SurfaceHolder ourHolder;
+        volatile boolean playingSnake;
+        Paint paint;
+
+        public SnakeView(Context context) {
+            super(context);
+            ourHolder = getHolder();
+            paint = new Paint();
+
+            snakeX = new int[200];
+            snakeY = new int[200];
+
+            // The starting snake
+            getSnake();
+            // The starting apple
+            getApple();
+        }
     }
 }
