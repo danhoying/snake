@@ -10,6 +10,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
+import java.util.Random;
+
 public class GameActivity extends AppCompatActivity {
 
     Canvas canvas;
@@ -81,6 +83,36 @@ public class GameActivity extends AppCompatActivity {
             getSnake();
             // The starting apple
             getApple();
+        }
+
+        public void getSnake() {
+            snakeLength = 3;
+            // Start snake head in middle of screen
+            snakeX[0] = numBlocksWide / 2;
+            snakeY[0] = numBlocksHigh / 2;
+
+            // Snake body
+            snakeX[1] = snakeX[0] - 1;
+            snakeY[1] = snakeY[0];
+
+            // Snake tail
+            snakeX[1] = snakeX[1] - 1;
+            snakeY[1] = snakeY[0];
+        }
+
+        public void getApple() {
+            Random random = new Random();
+            appleX = random.nextInt(numBlocksWide - 1) + 1;
+            appleY = random.nextInt(numBlocksHigh - 1) + 1;
+        }
+
+        @Override
+        public void run() {
+            while (playingSnake) {
+                updateGame();
+                drawGame();
+                controlFPS();
+            }
         }
     }
 }
