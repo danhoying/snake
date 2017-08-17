@@ -56,7 +56,7 @@ public class MainActivity extends AppCompatActivity {
         snakeAnimView = new SnakeAnimView(this);
         setContentView(snakeAnimView);
 
-//        i = new Intent(this, GameActivity.class);
+        i = new Intent(this, GameActivity.class);
     }
 
     class SnakeAnimView extends SurfaceView implements Runnable {

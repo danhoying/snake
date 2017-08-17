@@ -9,13 +9,12 @@ import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
-import android.graphics.Point;
 import android.media.AudioManager;
 import android.media.SoundPool;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.DisplayMetrics;
 import android.util.Log;
-import android.view.Display;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
@@ -56,8 +55,8 @@ public class GameActivity extends AppCompatActivity {
     int hi;
 
     // Game objects
-    int [] snakeX;
-    int [] snakeY;
+    int[] snakeX;
+    int[] snakeY;
     int snakeLength;
     int appleX;
     int appleY;
@@ -189,16 +188,16 @@ public class GameActivity extends AppCompatActivity {
                 canvas = ourHolder.lockCanvas();
                 canvas.drawColor(Color.BLACK); // The background
                 paint.setColor(Color.argb(255, 255, 255, 255));
-                paint.setTextSize(topGap / 2);
-                canvas.drawText("Score: " + score + " High: " + hi, 10, topGap - 6, paint);
+                paint.setTextSize(topGap - 10);
+                canvas.drawText("Score: " + score + " High: " + hi, 10, topGap - 30, paint);
 
                 // Draw a border around screen
                 paint.setStrokeWidth(3); // Set to 3 pixels
                 canvas.drawLine(1, topGap, screenWidth - 1, topGap, paint);
                 canvas.drawLine(screenWidth - 1, topGap, screenWidth - 1,
                         topGap + (numBlocksHigh * blockSize), paint);
-                canvas.drawLine(screenWidth - 1, topGap + (numBlocksHigh * blockSize), 1,
-                        topGap + (numBlocksHigh * blockSize), paint);
+                canvas.drawLine(screenWidth - 1, (screenHeight + 30) - topGap, 1,
+                        (screenHeight + 30) - topGap, paint);
                 canvas.drawLine(1, topGap, 1, topGap + (numBlocksHigh * blockSize), paint);
 
                 // Draw the snake head
@@ -303,7 +302,7 @@ public class GameActivity extends AppCompatActivity {
     public boolean onKeyDown(int keyCode, KeyEvent keyEvent) {
         if (keyCode == KeyEvent.KEYCODE_BACK) {
             snakeView.pause();
-            Intent i = new Intent (this, MainActivity.class);
+            Intent i = new Intent(this, MainActivity.class);
             startActivity(i);
             finish();
             return true;
@@ -337,18 +336,17 @@ public class GameActivity extends AppCompatActivity {
 
     public void configureDisplay() {
         // Determine width and height of screen
-        Display display = getWindowManager().getDefaultDisplay();
-        Point size = new Point();
-        display.getSize(size);
-        screenWidth = size.x;
-        screenHeight = size.y;
-        topGap = screenHeight / 14;
+        DisplayMetrics metrics = new DisplayMetrics();
+        getWindowManager().getDefaultDisplay().getMetrics(metrics);
+        screenHeight = metrics.heightPixels;
+        screenWidth = metrics.widthPixels;
+        topGap = screenHeight / 20;
 
         // Determine the size of each block on the game board
-        blockSize = screenWidth / 40;
+        blockSize = screenWidth / 20;
         // Determine how many blocks will fit into the height and width
         // Leave a one-block gap at the top for the score
-        numBlocksWide = 40;
+        numBlocksWide = 20;
         numBlocksHigh = (screenHeight - topGap) / blockSize;
 
         // Load and scale bitmaps
