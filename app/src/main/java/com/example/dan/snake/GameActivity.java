@@ -2,18 +2,26 @@ package com.example.dan.snake;
 
 import android.content.Context;
 import android.content.Intent;
+import android.content.res.AssetFileDescriptor;
+import android.content.res.AssetManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Color;
 import android.graphics.Paint;
+import android.graphics.Point;
+import android.media.AudioManager;
 import android.media.SoundPool;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
+import android.view.Display;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
+import java.io.IOException;
 import java.util.Random;
 
 public class GameActivity extends AppCompatActivity {
@@ -303,5 +311,56 @@ public class GameActivity extends AppCompatActivity {
         return false;
     }
 
+    public void loadSound() {
+        soundPool = new SoundPool(10, AudioManager.STREAM_MUSIC, 0);
+        try {
+            // Create objects of two required classes
+            AssetManager assetManager = getAssets();
+            AssetFileDescriptor descriptor;
 
+            // Create 4 fx in memory for use
+            descriptor = assetManager.openFd("sample1.ogg");
+            sample1 = soundPool.load(descriptor, 0);
+
+            descriptor = assetManager.openFd("sample2.ogg");
+            sample2 = soundPool.load(descriptor, 0);
+
+            descriptor = assetManager.openFd("sample3.ogg");
+            sample3 = soundPool.load(descriptor, 0);
+
+            descriptor = assetManager.openFd("sample4.ogg");
+            sample4 = soundPool.load(descriptor, 0);
+        } catch (IOException e) {
+            Log.e("error", "loadSound: failed to load sound files");
+        }
+    }
+
+    public void configureDisplay() {
+        // Determine width and height of screen
+        Display display = getWindowManager().getDefaultDisplay();
+        Point size = new Point();
+        display.getSize(size);
+        screenWidth = size.x;
+        screenHeight = size.y;
+        topGap = screenHeight / 14;
+
+        // Determine the size of each block on the game board
+        blockSize = screenWidth / 40;
+        // Determine how many blocks will fit into the height and width
+        // Leave a one-block gap at the top for the score
+        numBlocksWide = 40;
+        numBlocksHigh = (screenHeight - topGap) / blockSize;
+
+        // Load and scale bitmaps
+        headBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.head);
+        bodyBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.body);
+        tailBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.tail);
+        appleBitmap = BitmapFactory.decodeResource(getResources(), R.drawable.apple);
+
+        // Scale the bitmaps to match the block size
+        headBitmap = Bitmap.createScaledBitmap(headBitmap, blockSize, blockSize, false);
+        bodyBitmap = Bitmap.createScaledBitmap(bodyBitmap, blockSize, blockSize, false);
+        tailBitmap = Bitmap.createScaledBitmap(tailBitmap, blockSize, blockSize, false);
+        appleBitmap = Bitmap.createScaledBitmap(appleBitmap, blockSize, blockSize, false);
+    }
 }
