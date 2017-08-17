@@ -1,6 +1,7 @@
 package com.example.dan.snake;
 
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Color;
@@ -8,6 +9,8 @@ import android.graphics.Paint;
 import android.media.SoundPool;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.view.KeyEvent;
+import android.view.MotionEvent;
 import android.view.SurfaceHolder;
 import android.view.SurfaceView;
 
@@ -240,5 +243,65 @@ public class GameActivity extends AppCompatActivity {
             ourThread = new Thread(this);
             ourThread.start();
         }
+
+        @Override
+        public boolean onTouchEvent(MotionEvent motionEvent) {
+            switch (motionEvent.getAction() & MotionEvent.ACTION_MASK) {
+                case MotionEvent.ACTION_UP:
+                    if (motionEvent.getX() >= screenWidth / 2) {
+                        // Turn right
+                        directionOfTravel++;
+                        // No such direction
+                        if (directionOfTravel == 4) {
+                            // Loop back to 0 (up)
+                            directionOfTravel = 0;
+                        }
+                    } else {
+                        // Turn left
+                        directionOfTravel--;
+                        // No such direction
+                        if (directionOfTravel == -1) {
+                            // Loop back to 0 (up)
+                            directionOfTravel = 3;
+                        }
+                    }
+            }
+            return true;
+        }
     }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        while (true) {
+            snakeView.pause();
+            break;
+        }
+        finish();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        snakeView.resume();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        snakeView.pause();
+    }
+
+    public boolean onKeyDown(int keyCode, KeyEvent keyEvent) {
+        if (keyCode == KeyEvent.KEYCODE_BACK) {
+            snakeView.pause();
+            Intent i = new Intent (this, MainActivity.class);
+            startActivity(i);
+            finish();
+            return true;
+        }
+        return false;
+    }
+
+
 }
